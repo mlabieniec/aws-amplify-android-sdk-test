@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -141,8 +142,16 @@ public class LoginActivity extends AppCompatActivity {
                 Amplify.Auth.signIn(
                         usernameEditText.getText().toString(),
                         passwordEditText.getText().toString(),
-                        result -> Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete"),
-                        error -> Log.e("AuthQuickstart", error.toString())
+                        result -> {
+                            Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
+                            Looper.prepare();
+                            Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_LONG).show();
+                        },
+                        error -> {
+                            Log.e("AuthQuickstart", error.toString());
+                            Looper.prepare();
+                            Toast.makeText(getApplicationContext(), error.toString() , Toast.LENGTH_SHORT).show();
+                        }
                 );
                 /*
                 loginViewModel.login(usernameEditText.getText().toString(),
@@ -157,8 +166,17 @@ public class LoginActivity extends AppCompatActivity {
                 Amplify.Auth.confirmSignUp(
                         usernameEditText.getText().toString(),
                         confirmEditText.getText().toString(),
-                        result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
-                        error -> Log.e("AuthQuickstart", error.toString())
+                        result -> {
+                            Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete");
+                            Looper.prepare();
+                            Toast.makeText(getApplicationContext(), "Confirmed, you can now sign in", Toast.LENGTH_LONG).show();
+
+                        },
+                        error -> {
+                            Log.e("AuthQuickstart", error.toString());
+                            Looper.prepare();
+                            Toast.makeText(getApplicationContext(), "Error confirming, are you sure this is the right code? Check the console for details.", Toast.LENGTH_LONG).show();
+                        }
                 );
             }
         });
@@ -183,6 +201,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResult(SignUpResult result) {
                         Log.i("AWSMobileClient", "Login getSignInState: " + result);
+                        Looper.prepare();
+                        Toast.makeText(getApplicationContext(), "Registration success, please confirm with the confirmation code that was emailed to you", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
